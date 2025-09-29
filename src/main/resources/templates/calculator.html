@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Space & Cost Calculator</title>
+    <link rel="stylesheet" th:href="@{/css/calculator.css}">
+    <link rel="icon" type="image/png" th:href="@{/images/Garden-Guardian.png}">
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img th:src="@{/images/Garden-Guardian.png}" alt="" width="70" height="70">
+        <a th:href="@{/}" class="brand">Garden-Guardian</a>
+    </div>
+        <div class="menu-btn"></div>
+        <nav>
+            <ul>
+                <li><a th:href="@{/}">Home</a></li>
+                <li><a th:href="@{#}">Solutions </a>
+                    <ul>
+                        <li><a th:href="@{/pest-tool}">Pest</a></li>
+                        <li><a th:href="@{/water}">Water Calculator</a></li>
+                    </ul>
+                </li>
+                <li><a th:href="@{/about}">About US</a></li>
+                <li><a th:href="@{/logout}">Logout</a></li>
+            </ul>
+        </nav>
+</header>
+
+<div class="main-content">
+    <h1>Space & Cost Calculator</h1>
+
+    <form id="calculatorForm" th:object="${input}" th:action="@{/calculator}" method="post">
+        <label for="planName">Plan Name (optional):</label>
+        <input type="text" th:field="*{planName}" id="planName" />
+
+        <label for="gardenLength">Garden Length:</label>
+        <input type="number" th:field="*{gardenLength}" id="gardenLength" step="0.01" required aria-describedby="lengthUnit" />
+        <select th:field="*{lengthUnit}" id="lengthUnit">
+            <option value="meters">Meters</option>
+            <option value="centimeters">Centimeters</option>
+        </select>
+
+        <label for="gardenWidth">Garden Width:</label>
+        <input type="number" th:field="*{gardenWidth}" id="gardenWidth" step="0.01" required aria-describedby="widthUnit" />
+        <select th:field="*{widthUnit}" id="widthUnit">
+            <option value="meters">Meters</option>
+            <option value="centimeters">Centimeters</option>
+        </select>
+
+        <label for="borderWidth">Border Width (optional):</label>
+        <input type="number" th:field="*{borderWidth}" id="borderWidth" step="0.01" value="0" aria-describedby="borderUnit" />
+        <select th:field="*{borderUnit}" id="borderUnit">
+            <option value="meters">Meters</option>
+            <option value="centimeters">Centimeters</option>
+        </select>
+
+        <label for="pathwayWidth">Pathway Width (optional):</label>
+        <input type="number" th:field="*{pathwayWidth}" id="pathwayWidth" step="0.01" value="0" aria-describedby="pathwayUnit" />
+        <select th:field="*{pathwayUnit}" id="pathwayUnit">
+            <option value="meters">Meters</option>
+            <option value="centimeters">Centimeters</option>
+        </select>
+
+        <label for="pathwayLength">Pathway Length (optional):</label>
+        <input type="number" th:field="*{pathwayLength}" id="pathwayLength" step="0.01" value="0" aria-describedby="pathwayUnit" />
+        <select th:field="*{pathwayUnit}" id="pathwayUnit2">
+            <option value="meters">Meters</option>
+            <option value="centimeters">Centimeters</option>
+        </select>
+
+        <label for="layoutType">Planting Layout:</label>
+        <select th:field="*{layoutType}" id="layoutType">
+            <option value="grid">Grid</option>
+            <option value="triangular">Triangular (Staggered)</option>
+        </select>
+
+        <label for="soilCostPerSqm">Soil Cost (ZAR per square meter, optional):</label>
+        <input type="number" th:field="*{soilCostPerSqm}" id="soilCostPerSqm" step="0.01" value="0" />
+
+        <label for="fertilizerCostPerSqm">Fertilizer Cost (ZAR per square meter, optional):</label>
+        <input type="number" th:field="*{fertilizerCostPerSqm}" id="fertilizerCostPerSqm" step="0.01" value="0" />
+
+        <div id="cropsContainer">
+            <div th:each="crop, iterStat : *{crops}" class="crop-container">
+                <div class="crop-header">Crop <span th:text="${iterStat.count}"></span></div>
+                <label th:for="'crops[' + ${iterStat.index} + '].name'">Crop Name (optional):</label>
+                <input type="text" th:field="*{crops[__${iterStat.index}__].name}" th:id="'crops[' + ${iterStat.index} + '].name'" />
+
+                <label th:for="'crops[' + ${iterStat.index} + '].plantSpacing'">Plant Spacing:</label>
+                <input type="number" th:field="*{crops[__${iterStat.index}__].plantSpacing}" th:id="'crops[' + ${iterStat.index} + '].plantSpacing'" step="0.01" required />
+                <select th:field="*{crops[__${iterStat.index}__].spacingUnit}" th:id="'crops[' + ${iterStat.index} + '].spacingUnit'">
+                    <option value="meters">Meters</option>
+                    <option value="centimeters">Centimeters</option>
+                </select>
+
+                <label th:for="'crops[' + ${iterStat.index} + '].seedsPerPack'">Seeds per Pack:</label>
+                <input type="number" th:field="*{crops[__${iterStat.index}__].seedsPerPack}" th:id="'crops[' + ${iterStat.index} + '].seedsPerPack'" required />
+
+                <label th:for="'crops[' + ${iterStat.index} + '].pricePerPack'">Price per Seed Pack (ZAR):</label>
+                <input type="number" th:field="*{crops[__${iterStat.index}__].pricePerPack}" th:id="'crops[' + ${iterStat.index} + '].pricePerPack'" step="0.01" required />
+            </div>
+        </div>
+
+        <button type="button" id="addCrop">Add Crop</button>
+        <button type="submit" id="calculateBtn">Calculate</button>
+        <button type="submit" formaction="/calculator/save" id="savePlan">Save Plan to Database</button>
+        <label for="loadPlanSelect">Load Saved Plan:</label>
+        <select id="loadPlanSelect" onchange="if(this.value) window.location.href='/calculator/load/' + this.value">
+            <option value="">Select a plan</option>
+            <option th:each="plan : ${savedPlans}" th:value="${plan.id}" th:text="${plan.planName}"></option>
+        </select>
+    </form>
+</div>
+
+<div th:if="${message}" class="message" role="alert">
+    <p th:text="${message}"></p>
+</div>
+
+<div th:if="${errors}" class="errors" role="alert">
+    <h2>Errors:</h2>
+    <ul>
+        <li th:each="error : ${errors}" th:text="${error}"></li>
+    </ul>
+</div>
+
+<div th:if="${results != null}" class="results">
+    <h2>Results:</h2>
+    <p>Effective Garden Area: <span th:text="${#numbers.formatDecimal(gardenArea, 1, 2)}"></span> square meters</p>
+    <p>Total Plants: <span th:text="${totalPlants}"></span></p>
+    <div th:each="result : ${results}">
+        <h3 th:text="${result.name}"></h3>
+        <p>Plants: <span th:text="${result.plants}"></span></p>
+        <p>Seed Cost: R<span th:text="${#numbers.formatDecimal(result.cost, 1, 2)}"></span></p>
+    </div>
+    <div class="cost-breakdown">
+        <h3>Cost Breakdown:</h3>
+        <p>Total Seed Cost: R<span th:text="${#numbers.formatDecimal(totalSeedCost, 1, 2)}"></span></p>
+        <p>Soil Cost: R<span th:text="${#numbers.formatDecimal(soilCost, 1, 2)}"></span></p>
+        <p>Fertilizer Cost: R<span th:text="${#numbers.formatDecimal(fertilizerCost, 1, 2)}"></span></p>
+        <p><strong>Total Cost: R<span th:text="${#numbers.formatDecimal(totalCost, 1, 2)}"></span></strong></p>
+    </div>
+    <canvas id="gardenCanvas" width="400" height="400"></canvas>
+</div>
+
+<div th:if="${tips}" class="tips">
+    <h2>Gardening Tips:</h2>
+    <ul>
+        <li th:each="tip : ${tips}" th:text="${tip}"></li>
+    </ul>
+</div>
+
+<div th:insert="~{fragments/chatbot :: chatbot}"></div>
+
+<script th:src="@{/js/calculator.js}"></script>
+</body>
+</html>

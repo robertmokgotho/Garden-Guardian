@@ -1,0 +1,160 @@
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   font-family: 'Arial', sans-serif;
+}
+
+body{
+    background: url(../images/water.webp)no-repeat center;
+    background-size: cover;
+    height: 100dvh;
+}
+
+/*============================
+
+---------Navigation-----------
+
+=============================*/
+
+header{
+    position: fixed;
+    width: 100%;
+    min-height: 66px;
+    background: linear-gradient(135deg, hsl(0deg 0% 3.92% / 41%), #2bbf817d);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 0 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 999;
+}
+
+header .brand{
+    color: #fff;
+    font-size: 3vw;
+    font-weight: 700;
+    text-transform: uppercase;
+    text-decoration: none;
+}
+
+header ul{
+    position: relative;
+}
+
+header ul li{
+    list-style: none;
+    position: relative;
+    float: left;
+}
+
+header ul li a{
+    color: #fff;
+    font-size: 1.1em;
+    padding: 20px 25px;
+    text-decoration: none;
+    display: flex;
+    justify-content: space-between;
+
+}
+
+header ul li a:hover{
+    background: #25ae7591;
+}
+
+header ul li ul{
+    position: absolute;
+    left: 0;
+    width: 200px;
+    background: #4be1a36b;
+    display: none;
+}
+
+header ul li:hover ul{
+    display: block;
+}
+
+header ul li ul li{
+    position: relative;
+    width: 100%;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+/*=====================
+-----Maint Content-----
+=======================*/
+
+
+.main-content{
+    padding: 102px;
+}
+
+h1{
+    text-align: center;
+    color: #ffff;
+}
+
+.logo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/*=======================
+-------Form edit---------
+=========================*/
+
+form{
+    margin-top: 10px;
+    background: rgba(57, 176, 73, 0.885);
+    padding: 17px;
+    border-radius: 20px;
+    font-size: 1.4em;
+    font-weight: bold;
+}
+
+form input{
+    border: none;
+    height: 33px;
+    border-radius: 8px;
+}
+
+form .button-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+form .button{
+    padding: 15px;
+    font-size: 16px;
+    color: #fff;
+    background: linear-gradient(90deg, #00ffdc, #2f6615);
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(255, 0, 102, 0);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.button:hover {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    transform: translateY(-3px);
+}
+
+/*=========================
+-------Results------------
+==========================*/
+
+.result-container{
+    background: rgba(202, 219, 205, 0.885);
+    border-radius: 20px;
+    padding: 17px;
+    margin-top: 10px;
+}
+
+.result-container p {
+    padding: 10px 0;
+}
+

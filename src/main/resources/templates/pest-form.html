@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Pest Tool</title>
+  <link rel="stylesheet" th:href="@{/css/pest.css}">
+    <link rel="icon" type="image/png" th:href="@{/images/Garden-Guardian.png}">
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img th:src="@{/images/Garden-Guardian.png}" alt="" width="70" height="70">
+        <a href="#" class="brand">Garden-Guardian</a>
+    </div>
+        <div class="menu-btn"></div>
+        <nav>
+            <ul>
+                <li><a th:href="@{/}">Home</a></li>
+                <li><a th:href="@{#}">Solutions </a>
+                    <ul>
+                        <li><a th:href="@{/water}">Water Calculator</a></li>
+                        <li><a th:href="@{/calculator}">Space Calculator</a></li>
+                    </ul>
+                </li>
+                <li><a th:href="@{/about}">About US</a></li>
+                <li><a th:href="@{/logout}">Logout</a></li>
+            </ul>
+        </nav>
+</header>
+
+<div class="main-content">
+  <h1>Pest Identification Tool</h1>
+
+    <form th:action="@{/pest-tool}" th:object="${pestInput}" method="post">
+      <label for="cropType">Type of Crop:</label>
+      <select id="cropType" th:field="*{cropType}" required>
+        <option value="">Select a crop</option>
+        <option th:each="crop : ${cropTypes}" th:value="${crop}" th:text="${crop}"></option>
+      </select>
+      <br><br>
+
+      <label for="symptoms">Symptoms:</label>
+      <textarea id="symptoms" th:field="*{symptoms}" required></textarea>
+      <br><br>
+
+      <label for="affectedArea">Affected Area (sqm):</label>
+      <input type="number" id="affectedArea" th:field="*{affectedArea}" required min="0" step="0.1" />
+      <br><br>
+
+        <div class="button-container">
+          <button class="button" type="submit">submit</button>
+        </div>
+    </form>
+</div>
+
+<div th:insert="~{fragments/chatbot :: chatbot}"></div>
+
+<script th:src="@{js/pest.js}"></script>
+</body>
+</html>

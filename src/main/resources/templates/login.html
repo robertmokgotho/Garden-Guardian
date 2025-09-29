@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" th:href="@{/images/Garden-Guardian.png}">
+    <title>Login - Garden Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        img-logo {
+            align-items: center;
+            }
+
+        .logo h1 {
+            color: #4CAF50;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: white;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .forgot-link {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-btn:hover {
+            background: #45a049;
+        }
+
+        .login-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e1e1e1;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 20px;
+        }
+
+        .register-link {
+            text-align: center;
+        }
+
+        .register-link a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="logo">
+        <div class="img-logo">
+            <img th:src="@{/images/Garden-Guardian.png}" alt="" width="50" height="50">
+        </div>
+        <h1>Garden-Guardian</h1>
+        <p>Welcome back to your garden journey</p>
+    </div>
+
+    <!-- Success Message -->
+    <div th:if="${success}" class="alert alert-success">
+        <span>✅</span>
+        <span th:text="${success}">Registration successful!</span>
+    </div>
+
+    <!-- Error Message -->
+    <div th:if="${error}" class="alert alert-error">
+        <span>❌</span>
+        <span th:text="${error}">Invalid credentials</span>
+    </div>
+
+    <form th:action="@{/login}" method="post" id="loginForm">
+        <div class="form-group">
+            <label for="username">Username or Email</label>
+            <input type="text"
+                   id="username"
+                   name="username"
+                   required
+                   autocomplete="username"
+                   placeholder="Enter your username or email">
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password"
+                   id="password"
+                   name="password"
+                   required
+                   autocomplete="current-password"
+                   placeholder="Enter your password">
+        </div>
+
+        <div class="form-options">
+            <label class="remember-me">
+                <input type="checkbox" name="remember-me">
+                Remember me
+            </label>
+            <a href="#" class="forgot-link">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="login-btn" id="loginButton">
+            Sign In
+        </button>
+    </form>
+
+    <div class="divider">
+        <span>Don't have an account?</span>
+    </div>
+
+    <div class="register-link">
+        <a th:href="@{/register}">Create Account</a>
+    </div>
+</div>
+
+<script>
+    console.log('Login page loaded successfully!');
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded');
+
+        const form = document.getElementById('loginForm');
+        const button = document.getElementById('loginButton');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        // Test if elements exist
+        console.log('Form:', form);
+        console.log('Button:', button);
+        console.log('Username input:', usernameInput);
+        console.log('Password input:', passwordInput);
+
+        // Add input event listeners
+        usernameInput.addEventListener('input', function() {
+            console.log('Username input changed:', this.value);
+        });
+
+        passwordInput.addEventListener('input', function() {
+            console.log('Password input changed: [hidden]');
+        });
+
+        // Add form submit handler
+        form.addEventListener('submit', function(e) {
+            console.log('Form submitted');
+            button.disabled = true;
+            button.textContent = 'Signing In...';
+        });
+
+        // Add button click handler
+        button.addEventListener('click', function(e) {
+            console.log('Button clicked');
+        });
+
+        console.log('All event listeners added successfully');
+    });
+</script>
+</body>
+</html>

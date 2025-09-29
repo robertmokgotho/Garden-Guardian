@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Water Management Tool</title>
+  <link rel="stylesheet" th:href="@{/css/water.css}">
+    <link rel="icon" type="image/png" th:href="@{/images/Garden-Guardian.png}">
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <img th:src="@{/images/Garden-Guardian.png}" alt="" width="70" height="70">
+        <a th:href="@{/}" class="brand">Garden-Guardian</a>
+    </div>
+        <div class="menu-btn"></div>
+        <nav>
+            <ul>
+                <li><a th:href="@{/}">Home</a></li>
+                <li><a th:href="@{#}">Solutions </a>
+                    <ul>
+                        <li><a th:href="@{/pest-tool}">Pest</a></li>
+                        <li><a th:href="@{/calculator}">Space Calculator</a></li>
+                    </ul>
+                </li>
+                <li><a th:href="@{/about}">About US</a></li>
+                <li><a th:href="@{/logout}">Logout</a></li>
+            </ul>
+        </nav>
+</header>
+
+<div class="main-content">
+  <h1>Water Management Tool</h1>
+
+    <form th:action="@{/water}" th:object="${calculation}" method="post">
+      <label for="area">Area (square meters):</label>
+      <input type="number" id="area" th:field="*{area}" step="0.01" required placeholder="e.g. 100" /><br/><br/>
+
+      <label for="waterRate">Water Rate (liters per square meter):</label>
+      <input type="number" id="waterRate" th:field="*{waterRate}" step="0.01" required placeholder="e.g. 2" /><br/><br/>
+
+      <label for="wateringDays">Number of Watering Days:</label>
+      <input type="number" id="wateringDays" th:field="*{wateringDays}" required placeholder="e.g 5"/><br/><br/>
+
+      <label for="costPerLiter">Cost per Liter:</label>
+      <input type="number" id="costPerLiter" th:field="*{costPerLiter}" step="0.01" required placeholder="e.g 2.5"/><br/><br/>
+
+      <div class="button-container">
+        <button class="button" type="submit">Calculate</button>
+      </div>
+    </form>
+
+    <div class="result-container" th:if="${calculation.totalWater > 0}">
+      <h2>Results:</h2>
+      <p>Total Water Used: <span th:text="${calculation.totalWater} + ' liters'"></span></p>
+      <p>Estimated Cost: R<span th:text="${calculation.estimatedCost}"></span></p>
+    </div>
+</div>
+
+<div th:insert="~{fragments/chatbot :: chatbot}"></div>
+
+</body>
+</html>

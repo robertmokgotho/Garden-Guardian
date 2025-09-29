@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" th:href="@{/images/Garden-Guardian.png}">
+    <title>Register - Garden Planner</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .register-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        img-logo {
+            align-items: center;
+        }
+
+        .logo h1 {
+            color: #4CAF50;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .logo p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            background: #f8f9fa;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4CAF50;
+            background: white;
+        }
+
+        .field-error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .register-btn {
+            width: 100%;
+            background: #4CAF50;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .register-btn:hover {
+            background: #45a049;
+        }
+
+        .register-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e1e1e1;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 20px;
+        }
+
+        .login-link {
+            text-align: center;
+        }
+
+        .login-link a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link:hover {
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<a th:href="@{/login}" class="back-link">← Back to Login</a>
+
+<div class="register-container">
+    <div class="logo">
+        <div class="img-logo">
+            <img th:src="@{/images/Garden-Guardian.png}" alt="" width="50" height="50">
+        </div>
+        <h1>Garden-Guardian</h1>
+        <p>Join the garden community today</p>
+    </div>
+
+    <!-- Error Message -->
+    <div th:if="${error}" class="alert alert-error">
+        <span>❌</span>
+        <span th:text="${error}">Registration failed</span>
+    </div>
+
+    <form th:action="@{/register}" th:object="${user}" method="post" id="registerForm">
+        <div class="form-row">
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text"
+                       id="firstName"
+                       th:field="*{firstName}"
+                       required
+                       maxlength="50"
+                       placeholder="Enter your first name">
+                <div th:if="${#fields.hasErrors('firstName')}" class="field-error">
+                    <span>⚠️</span>
+                    <span th:errors="*{firstName}"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text"
+                       id="lastName"
+                       th:field="*{lastName}"
+                       required
+                       maxlength="50"
+                       placeholder="Enter your last name">
+                <div th:if="${#fields.hasErrors('lastName')}" class="field-error">
+                    <span>⚠️</span>
+                    <span th:errors="*{lastName}"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text"
+                   id="username"
+                   th:field="*{username}"
+                   required
+                   minlength="3"
+                   maxlength="50"
+                   placeholder="Enter your username">
+            <div th:if="${#fields.hasErrors('username')}" class="field-error">
+                <span>⚠️</span>
+                <span th:errors="*{username}"></span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email"
+                   id="email"
+                   th:field="*{email}"
+                   required
+                   placeholder="Enter your email address">
+            <div th:if="${#fields.hasErrors('email')}" class="field-error">
+                <span>⚠️</span>
+                <span th:errors="*{email}"></span>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password"
+                       id="password"
+                       th:field="*{password}"
+                       required
+                       minlength="6"
+                       placeholder="Enter your password">
+                <div th:if="${#fields.hasErrors('password')}" class="field-error">
+                    <span>⚠️</span>
+                    <span th:errors="*{password}"></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password"
+                       id="confirmPassword"
+                       th:field="*{confirmPassword}"
+                       required
+                       placeholder="Confirm your password">
+                <div th:if="${#fields.hasErrors('confirmPassword')}" class="field-error">
+                    <span>⚠️</span>
+                    <span th:errors="*{confirmPassword}"></span>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="register-btn" id="registerButton">
+            Create Account
+        </button>
+    </form>
+
+    <div class="divider">
+        <span>Already have an account?</span>
+    </div>
+
+    <div class="login-link">
+        <a th:href="@{/login}">Sign In</a>
+    </div>
+</div>
+
+<script>
+    console.log('Register page loaded successfully!');
+
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOM loaded');
+
+        const form = document.getElementById('registerForm');
+        const button = document.getElementById('registerButton');
+        const inputs = form.querySelectorAll('input');
+
+        console.log('Form:', form);
+        console.log('Button:', button);
+        console.log('Inputs found:', inputs.length);
+
+        // Add input event listeners for testing
+        inputs.forEach((input, index) => {
+            console.log(`Input ${index}:`, input.id, input.type);
+
+            input.addEventListener('input', function() {
+                console.log(`${this.id} changed:`, this.value);
+            });
+
+            input.addEventListener('focus', function() {
+                console.log(`${this.id} focused`);
+            });
+        });
+
+        // Add form submit handler
+        form.addEventListener('submit', function(e) {
+            console.log('Form submitted');
+            button.disabled = true;
+            button.textContent = 'Creating Account...';
+        });
+
+        // Add button click handler
+        button.addEventListener('click', function(e) {
+            console.log('Register button clicked');
+        });
+
+        console.log('All event listeners added successfully');
+    });
+</script>
+</body>
+</html>

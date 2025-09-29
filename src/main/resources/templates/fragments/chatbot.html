@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Garden Problem Solver Chatbot</title>
+</head>
+<body>
+
+  <div th:fragment="chatbot">
+
+  <style>
+    /* Chatbot container */
+    .chatbot-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        font-family: Arial, sans-serif;
+    }
+
+    /* Chatbot button */
+    .chatbot-button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        transition: all 0.3s ease;
+    }
+
+    .chatbot-button:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
+    }
+
+    /* Chatbot window */
+    .chatbot-window {
+        width: 350px;
+        height: 500px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        margin-bottom: 10px;
+    }
+
+    .chatbot-header {
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .chatbot-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 20px;
+        cursor: pointer;
+    }
+
+    .chatbot-messages {
+        flex: 1;
+        padding: 15px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .message {
+        max-width: 80%;
+        padding: 10px;
+        border-radius: 10px;
+        line-height: 1.4;
+    }
+
+    .bot-message {
+        background-color: #f1f1f1;
+        align-self: flex-start;
+        border-bottom-left-radius: 0;
+    }
+
+    .user-message {
+        background-color: #4CAF50;
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 0;
+    }
+
+    .chatbot-input {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+    }
+
+    .chatbot-input input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        outline: none;
+    }
+
+    .chatbot-input button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        padding: 10px 15px;
+        margin-left: 5px;
+        cursor: pointer;
+    }
+
+    .quick-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+    }
+
+    .quick-option {
+        background-color: #e7f3e7;
+        border: 1px solid #4CAF50;
+        border-radius: 15px;
+        padding: 5px 10px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .quick-option:hover {
+        background-color: #d4ecd4;
+    }
+
+    /* Typing indicator */
+    .typing-indicator {
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        background-color: #f1f1f1;
+        border-radius: 10px;
+        align-self: flex-start;
+        max-width: 80px;
+        margin-bottom: 10px;
+    }
+
+    .typing-dot {
+        width: 8px;
+        height: 8px;
+        background-color: #888;
+        border-radius: 50%;
+        margin: 0 2px;
+        animation: typing 1.4s infinite ease-in-out;
+    }
+
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes typing {
+        0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+        40% { transform: scale(1); opacity: 1; }
+    }
+  </style>
+
+<!-- Chatbot Container -->
+<div class="chatbot-container">
+  <div class="chatbot-window" id="chatbotWindow">
+    <div class="chatbot-header">
+      <span>Garden Assistant</span>
+      <button class="chatbot-close" id="chatbotClose">×</button>
+    </div>
+    <div class="chatbot-messages" id="chatbotMessages">
+      <!-- Messages will be added here dynamically -->
+    </div>
+    <div class="quick-options" id="quickOptions">
+      <!-- Quick options will be added here dynamically -->
+    </div>
+    <div class="chatbot-input">
+      <input type="text" id="chatbotInput" placeholder="Type your garden problem...">
+      <button id="chatbotSend">Send</button>
+    </div>
+  </div>
+  <button class="chatbot-button" id="chatbotToggle">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H5.17L4 17.17V4H20V16Z" fill="white"/>
+      <path d="M7 9H17V11H7V9ZM7 12H15V14H7V12Z" fill="white"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+  // Garden problem knowledge base
+  const gardenKnowledge = {
+      pests: {
+          aphids: "Aphids can be controlled by spraying plants with a mixture of water and a few drops of dish soap. Ladybugs are natural predators that eat aphids.",
+          slugs: "Use beer traps or copper tape around plants to deter slugs. Diatomaceous earth sprinkled around plants also works well.",
+          caterpillars: "Handpick caterpillars off plants or use Bacillus thuringiensis (Bt), a natural bacteria that targets caterpillars.",
+          general: "For pest problems, try companion planting with marigolds, garlic, or onions which naturally repel many pests. Neem oil is also an effective organic pesticide."
+      },
+      water: {
+          overwatering: "Signs of overwatering include yellow leaves and root rot. Allow soil to dry between waterings and ensure proper drainage.",
+          underwatering: "Wilting, dry soil, and brown leaf tips indicate underwatering. Water deeply but less frequently to encourage deep root growth.",
+          irrigation: "Consider drip irrigation systems for efficient watering. Mulching helps retain soil moisture and reduces watering needs.",
+          general: "Most plants need about 1 inch of water per week. Water in the morning to reduce evaporation and prevent fungal diseases."
+      },
+      space: {
+          small: "Use vertical gardening with trellises, hanging baskets, or wall planters. Container gardening is great for small spaces.",
+          companion: "Practice companion planting to maximize space. For example, plant tall corn with low-growing squash and beans (Three Sisters method).",
+          containers: "Many vegetables grow well in containers. Use 5-gallon buckets for tomatoes, peppers need 3-5 gallon containers, and herbs can grow in smaller pots.",
+          general: "Consider square foot gardening to maximize small spaces. Use tiered planters or raised beds to create more growing area."
+      },
+      cost: {
+          seeds: "Save seeds from your best plants for next season. Join seed swap groups in your community.",
+          fertilizer: "Make compost from kitchen scraps and yard waste. Use coffee grounds as fertilizer for acid-loving plants.",
+          tools: "Look for used garden tools at thrift stores or online marketplaces. Share tools with gardening neighbors.",
+          general: "Start plants from seeds instead of buying seedlings. Use recycled containers as planters. Make your own pest control solutions."
+      }
+  };
+
+  // Quick response options
+  const quickOptions = [
+      "Pest problems",
+      "Watering issues",
+      "Limited space",
+      "Budget gardening",
+      "Soil quality",
+      "Plant diseases"
+  ];
+
+  // DOM elements
+  const chatbotToggle = document.getElementById('chatbotToggle');
+  const chatbotWindow = document.getElementById('chatbotWindow');
+  const chatbotClose = document.getElementById('chatbotClose');
+  const chatbotMessages = document.getElementById('chatbotMessages');
+  const chatbotInput = document.getElementById('chatbotInput');
+  const chatbotSend = document.getElementById('chatbotSend');
+  const quickOptionsContainer = document.getElementById('quickOptions');
+
+  // Initialize chatbot
+  function initChatbot() {
+      // Add welcome message
+      addBotMessage("Hello! I'm your garden assistant. How can I help with your garden problems today?");
+
+      // Add quick options
+      renderQuickOptions();
+
+      // Event listeners
+      chatbotToggle.addEventListener('click', toggleChatbot);
+      chatbotClose.addEventListener('click', toggleChatbot);
+      chatbotSend.addEventListener('click', sendMessage);
+      chatbotInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+              sendMessage();
+          }
+      });
+  }
+
+  // Toggle chatbot visibility
+  function toggleChatbot() {
+      if (chatbotWindow.style.display === 'flex') {
+          chatbotWindow.style.display = 'none';
+      } else {
+          chatbotWindow.style.display = 'flex';
+          chatbotInput.focus();
+      }
+  }
+
+  // Add bot message
+  function addBotMessage(text) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message bot-message';
+      messageDiv.textContent = text;
+      chatbotMessages.appendChild(messageDiv);
+      scrollToBottom();
+  }
+
+  // Add user message
+  function addUserMessage(text) {
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message user-message';
+      messageDiv.textContent = text;
+      chatbotMessages.appendChild(messageDiv);
+      scrollToBottom();
+  }
+
+  // Show typing indicator
+  function showTypingIndicator() {
+      const typingDiv = document.createElement('div');
+      typingDiv.className = 'typing-indicator';
+      typingDiv.id = 'typingIndicator';
+      typingDiv.innerHTML = `
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+      `;
+      chatbotMessages.appendChild(typingDiv);
+      scrollToBottom();
+  }
+
+  // Hide typing indicator
+  function hideTypingIndicator() {
+      const typingIndicator = document.getElementById('typingIndicator');
+      if (typingIndicator) {
+          typingIndicator.remove();
+      }
+  }
+
+  // Scroll to bottom of messages
+  function scrollToBottom() {
+      chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+  }
+
+  // Render quick options
+  function renderQuickOptions() {
+      quickOptionsContainer.innerHTML = '';
+      quickOptions.forEach(option => {
+          const optionElement = document.createElement('div');
+          optionElement.className = 'quick-option';
+          optionElement.textContent = option;
+          optionElement.addEventListener('click', () => {
+              handleQuickOption(option);
+          });
+          quickOptionsContainer.appendChild(optionElement);
+      });
+  }
+
+  // Handle quick option selection
+  function handleQuickOption(option) {
+      addUserMessage(option);
+      showTypingIndicator();
+
+      setTimeout(() => {
+          hideTypingIndicator();
+          let response = '';
+
+          switch(option) {
+              case "Pest problems":
+                  response = "I can help with pest issues! Common garden pests include aphids, slugs, and caterpillars. What specific pest are you dealing with?";
+                  break;
+              case "Watering issues":
+                  response = "Watering problems are common. Are you dealing with overwatering, underwatering, or irrigation system questions?";
+                  break;
+              case "Limited space":
+                  response = "Small garden spaces can be challenging but rewarding! I can suggest vertical gardening, container options, or space-efficient planting techniques.";
+                  break;
+              case "Budget gardening":
+                  response = "Gardening on a budget is possible! I have tips for saving on seeds, making your own fertilizer, and finding affordable tools.";
+                  break;
+              case "Soil quality":
+                  response = "Good soil is the foundation of a healthy garden. I can help with soil testing, amendments, and composting advice.";
+                  break;
+              case "Plant diseases":
+                  response = "Plant diseases can be frustrating. Tell me about the symptoms you're seeing and I'll suggest organic treatment options.";
+                  break;
+              default:
+                  response = "I'd be happy to help with that! Could you provide more details about your garden problem?";
+          }
+
+          addBotMessage(response);
+      }, 1000);
+  }
+
+  // Process user message and generate response
+  function processUserMessage(message) {
+      const lowerMessage = message.toLowerCase();
+      let response = "I'm here to help with garden problems! Could you provide more details about your specific issue with pests, water, space, or costs?";
+
+      // Check for pest-related keywords
+      if (lowerMessage.includes('pest') || lowerMessage.includes('bug') || lowerMessage.includes('insect')) {
+          if (lowerMessage.includes('aphid')) {
+              response = gardenKnowledge.pests.aphids;
+          } else if (lowerMessage.includes('slug')) {
+              response = gardenKnowledge.pests.slugs;
+          } else if (lowerMessage.includes('caterpillar')) {
+              response = gardenKnowledge.pests.caterpillars;
+          } else {
+              response = gardenKnowledge.pests.general;
+          }
+      }
+      // Check for water-related keywords
+      else if (lowerMessage.includes('water') || lowerMessage.includes('irrigation') || lowerMessage.includes('dry') || lowerMessage.includes('wet')) {
+          if (lowerMessage.includes('overwater') || lowerMessage.includes('too much water')) {
+              response = gardenKnowledge.water.overwatering;
+          } else if (lowerMessage.includes('underwater') || lowerMessage.includes('not enough water')) {
+              response = gardenKnowledge.water.underwatering;
+          } else if (lowerMessage.includes('irrigation') || lowerMessage.includes('system')) {
+              response = gardenKnowledge.water.irrigation;
+          } else {
+              response = gardenKnowledge.water.general;
+          }
+      }
+      // Check for space-related keywords
+      else if (lowerMessage.includes('space') || lowerMessage.includes('small') || lowerMessage.includes('container') || lowerMessage.includes('vertical')) {
+          if (lowerMessage.includes('small') || lowerMessage.includes('limited')) {
+              response = gardenKnowledge.space.small;
+          } else if (lowerMessage.includes('companion') || lowerMessage.includes('planting together')) {
+              response = gardenKnowledge.space.companion;
+          } else if (lowerMessage.includes('container') || lowerMessage.includes('pot')) {
+              response = gardenKnowledge.space.containers;
+          } else {
+              response = gardenKnowledge.space.general;
+          }
+      }
+      // Check for cost-related keywords
+      else if (lowerMessage.includes('cost') || lowerMessage.includes('budget') || lowerMessage.includes('money') || lowerMessage.includes('expensive') || lowerMessage.includes('cheap')) {
+          if (lowerMessage.includes('seed')) {
+              response = gardenKnowledge.cost.seeds;
+          } else if (lowerMessage.includes('fertilizer') || lowerMessage.includes('compost')) {
+              response = gardenKnowledge.cost.fertilizer;
+          } else if (lowerMessage.includes('tool')) {
+              response = gardenKnowledge.cost.tools;
+          } else {
+              response = gardenKnowledge.cost.general;
+          }
+      }
+
+      return response;
+  }
+
+  // Send message
+  function sendMessage() {
+      const message = chatbotInput.value.trim();
+      if (message === '') return;
+
+      addUserMessage(message);
+      chatbotInput.value = '';
+
+      showTypingIndicator();
+
+      setTimeout(() => {
+          hideTypingIndicator();
+          const response = processUserMessage(message);
+          addBotMessage(response);
+      }, 1000);
+  }
+
+  // Initialize chatbot when page loads
+  document.addEventListener('DOMContentLoaded', initChatbot);
+</script>
+  </div>
+</body>
+</html>

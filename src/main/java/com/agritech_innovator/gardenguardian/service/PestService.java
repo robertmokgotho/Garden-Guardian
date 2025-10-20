@@ -4,8 +4,28 @@ import com.agritech_innovator.gardenguardian.model.PestInput;
 import com.agritech_innovator.gardenguardian.model.PestOutput;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class PestService {
+
+    // Map of crop types to their possible symptoms
+    private final Map<String, String[]> cropSymptomsMap = new HashMap<>();
+
+    public PestService() {
+        // Initialize crop-to-symptoms mapping
+        cropSymptomsMap.put("Tomato", new String[]{"Wilting", "Yellow Leaves", "Spots", "Blight"});
+        cropSymptomsMap.put("Wheat", new String[]{"Rust", "Brown Spots", "Aphids", "Sticky Leaves"});
+        cropSymptomsMap.put("Corn", new String[]{"Holes in Leaves", "Chewed", "Yellowing", "Stunted Growth"});
+        cropSymptomsMap.put("Rice", new String[]{"Yellowing", "Stunted Growth", "Brown Spots", "Leaf Blast"});
+        cropSymptomsMap.put("Potato", new String[]{"Black Spots", "Scabs", "Wilting", "Tuber Damage"});
+        cropSymptomsMap.put("Soybean", new String[]{"Defoliation", "Chewed Leaves", "Yellowing", "Pod Damage"});
+        cropSymptomsMap.put("Cotton", new String[]{"Boll Damage", "Worms", "Yellowing", "Leaf Curl"});
+        cropSymptomsMap.put("Sugarcane", new String[]{"Borer Holes", "Tunnels", "Yellowing", "Stunted Growth"});
+        cropSymptomsMap.put("Apple", new String[]{"Moth Larvae", "Fruit Damage", "Leaf Spots", "Powdery Mildew"});
+        cropSymptomsMap.put("Grape", new String[]{"Powdery Mildew", "White Coating", "Leaf Spots", "Berry Rot"});
+    }
 
     public PestOutput identifyAndTreat(PestInput input) {
         String cropType = input.getCropType().toLowerCase();
@@ -17,7 +37,7 @@ public class PestService {
         double sprayRatePerSqm = 0.0; // liters per sqm
         double costPerUnit = 0.0; // cost per liter
 
-        // Expanded rule-based logic for more crop types
+        // Rule-based logic for pest identification
         if (cropType.contains("tomato")) {
             if (symptoms.contains("wilting") || symptoms.contains("yellow leaves")) {
                 pestName = "Fusarium Wilt";
@@ -48,6 +68,11 @@ public class PestService {
                 treatmentMethod = "Apply Bacillus thuringiensis (Bt) spray";
                 sprayRatePerSqm = 0.06;
                 costPerUnit = 9.0;
+            } else if (symptoms.contains("yellowing") || symptoms.contains("stunted")) {
+                pestName = "Nutrient Deficiency";
+                treatmentMethod = "Apply foliar fertilizer";
+                sprayRatePerSqm = 0.05;
+                costPerUnit = 7.0;
             }
         } else if (cropType.contains("rice")) {
             if (symptoms.contains("yellowing") || symptoms.contains("stunted")) {
@@ -55,6 +80,11 @@ public class PestService {
                 treatmentMethod = "Apply tricyclazole fungicide";
                 sprayRatePerSqm = 0.07;
                 costPerUnit = 11.0;
+            } else if (symptoms.contains("brown spots") || symptoms.contains("leaf blast")) {
+                pestName = "Leaf Blast";
+                treatmentMethod = "Apply propiconazole fungicide";
+                sprayRatePerSqm = 0.06;
+                costPerUnit = 10.0;
             }
         } else if (cropType.contains("potato")) {
             if (symptoms.contains("black spots") || symptoms.contains("scabs")) {
@@ -62,6 +92,11 @@ public class PestService {
                 treatmentMethod = "Use resistant varieties and sulfur-based treatment";
                 sprayRatePerSqm = 0.05;
                 costPerUnit = 10.0;
+            } else if (symptoms.contains("wilting") || symptoms.contains("tuber damage")) {
+                pestName = "Potato Blight";
+                treatmentMethod = "Apply mancozeb fungicide";
+                sprayRatePerSqm = 0.07;
+                costPerUnit = 12.0;
             }
         } else if (cropType.contains("soybean")) {
             if (symptoms.contains("defoliation") || symptoms.contains("chewed leaves")) {
@@ -69,6 +104,11 @@ public class PestService {
                 treatmentMethod = "Apply spinosad insecticide";
                 sprayRatePerSqm = 0.06;
                 costPerUnit = 12.0;
+            } else if (symptoms.contains("yellowing") || symptoms.contains("pod damage")) {
+                pestName = "Soybean Aphid";
+                treatmentMethod = "Apply imidacloprid insecticide";
+                sprayRatePerSqm = 0.04;
+                costPerUnit = 9.0;
             }
         } else if (cropType.contains("cotton")) {
             if (symptoms.contains("boll damage") || symptoms.contains("worms")) {
@@ -76,6 +116,11 @@ public class PestService {
                 treatmentMethod = "Apply pyrethroid insecticide";
                 sprayRatePerSqm = 0.08;
                 costPerUnit = 14.0;
+            } else if (symptoms.contains("yellowing") || symptoms.contains("leaf curl")) {
+                pestName = "Cotton Leaf Curl Virus";
+                treatmentMethod = "Remove infected plants and control whiteflies";
+                sprayRatePerSqm = 0.05;
+                costPerUnit = 11.0;
             }
         } else if (cropType.contains("sugarcane")) {
             if (symptoms.contains("borer holes") || symptoms.contains("tunnels")) {
@@ -83,6 +128,11 @@ public class PestService {
                 treatmentMethod = "Apply chlorantraniliprole insecticide";
                 sprayRatePerSqm = 0.05;
                 costPerUnit = 13.0;
+            } else if (symptoms.contains("yellowing") || symptoms.contains("stunted")) {
+                pestName = "Sugarcane Mosaic Virus";
+                treatmentMethod = "Remove infected plants and use resistant varieties";
+                sprayRatePerSqm = 0.0; // No spray
+                costPerUnit = 0.0;
             }
         } else if (cropType.contains("apple")) {
             if (symptoms.contains("moth larvae") || symptoms.contains("fruit damage")) {
@@ -90,6 +140,11 @@ public class PestService {
                 treatmentMethod = "Apply spinosad-based pesticide";
                 sprayRatePerSqm = 0.04;
                 costPerUnit = 15.0;
+            } else if (symptoms.contains("leaf spots") || symptoms.contains("powdery mildew")) {
+                pestName = "Apple Scab";
+                treatmentMethod = "Apply myclobutanil fungicide";
+                sprayRatePerSqm = 0.06;
+                costPerUnit = 12.0;
             }
         } else if (cropType.contains("grape")) {
             if (symptoms.contains("powdery mildew") || symptoms.contains("white coating")) {
@@ -97,6 +152,11 @@ public class PestService {
                 treatmentMethod = "Apply sulfur-based fungicide";
                 sprayRatePerSqm = 0.07;
                 costPerUnit = 10.0;
+            } else if (symptoms.contains("leaf spots") || symptoms.contains("berry rot")) {
+                pestName = "Downy Mildew";
+                treatmentMethod = "Apply copper-based fungicide";
+                sprayRatePerSqm = 0.08;
+                costPerUnit = 11.0;
             }
         }
 
@@ -112,5 +172,10 @@ public class PestService {
                 "Tomato", "Wheat", "Corn", "Rice", "Potato",
                 "Soybean", "Cotton", "Sugarcane", "Apple", "Grape"
         };
+    }
+
+    // Method to provide symptoms for a given crop
+    public String[] getSymptomsForCrop(String cropType) {
+        return cropSymptomsMap.getOrDefault(cropType, new String[]{});
     }
 }

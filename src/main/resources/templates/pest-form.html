@@ -33,14 +33,17 @@
 
     <form th:action="@{/pest-tool}" th:object="${pestInput}" method="post">
       <label for="cropType">Type of Crop:</label>
-      <select id="cropType" th:field="*{cropType}" required>
+      <select id="cropType" th:field="*{cropType}" required onchange="updateSymptoms()">
         <option value="">Select a crop</option>
         <option th:each="crop : ${cropTypes}" th:value="${crop}" th:text="${crop}"></option>
       </select>
       <br><br>
 
       <label for="symptoms">Symptoms:</label>
-      <textarea id="symptoms" th:field="*{symptoms}" required></textarea>
+        <select id="symptoms" th:field="*{symptoms}" required>
+            <option value="">Select a symptom</option>
+            <option th:each="symptom : ${symptoms}" th:value="${symptom}" th:text="${symptom}"></option>
+        </select>
       <br><br>
 
       <label for="affectedArea">Affected Area (sqm):</label>
@@ -53,7 +56,44 @@
     </form>
 </div>
 
-<div th:insert="~{fragments/chatbot :: chatbot}"></div>
+<div th:replace="fragments/chatbot :: chatbot"></div>
+
+<script>
+    // JavaScript to dynamically update symptoms dropdown based on crop selection
+    async function updateSymptoms() {
+        const cropSelect = document.getElementById('cropType');
+        const symptomSelect = document.getElementById('symptoms');
+        const crop = cropSelect.value;
+
+        if (crop) {
+            // Fetch symptoms for the selected crop via AJAX
+            try {
+                const response = await fetch(`/pest-tool/symptoms?crop=${encodeURIComponent(crop)}`);
+                const symptoms = await response.json();
+                symptomSelect.innerHTML = '<option value="">Select a symptom</option>';
+                symptoms.forEach(symptom => {
+                    const option = document.createElement('option');
+                    option.value = symptom;
+                    option.textContent = symptom;
+                    symptomSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error fetching symptoms:', error);
+                symptomSelect.innerHTML = '<option value="">Error loading symptoms</option>';
+            }
+        } else {
+            symptomSelect.innerHTML = '<option value="">Select a crop first</option>';
+        }
+    }
+
+    // Form validation
+    document.querySelector('form').addEventListener('submit', function(e) {
+        if (!this.checkValidity()) {
+            e.preventDefault();
+            alert('Please fill all fields correctly.');
+        }
+    });
+</script>
 
 <script th:src="@{js/pest.js}"></script>
 </body>

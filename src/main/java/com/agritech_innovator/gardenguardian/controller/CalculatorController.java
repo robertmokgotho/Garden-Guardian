@@ -25,16 +25,6 @@ public class CalculatorController {
     @Autowired
     private GardenPlanRepository gardenPlanRepository;
 
-    //Home
-    @GetMapping("/")
-    public String getHome() {
-        return "home";
-    }
-
-    @GetMapping("/about")
-    public String getAbout(){
-        return "about";
-    }
 
     @GetMapping("/calculator")
     public String showForm(Model model) {

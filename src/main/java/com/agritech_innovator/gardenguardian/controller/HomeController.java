@@ -15,6 +15,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class HomeController {
 
+    //Home
+    @GetMapping("/")
+    public String getHome() {
+        return "home";
+    }
+
+    @GetMapping("/about")
+    public String getAbout(){
+        return "about";
+    }
 
 
     @GetMapping("/water")
@@ -44,19 +54,19 @@ public class HomeController {
     @Autowired
     private PestService pestService;
 
-    @GetMapping("/pest-tool")
-    public String getForm(Model model) {
-        model.addAttribute("pestInput", new PestInput());
-        model.addAttribute("cropTypes", pestService.getCropTypes());
-        return "pest-form"; // Thymeleaf template name
-    }
-
-    @PostMapping("/pest-tool")
-    public String processForm(@ModelAttribute PestInput pestInput, Model model) {
-        PestOutput output = pestService.identifyAndTreat(pestInput);
-        model.addAttribute("pestOutput", output);
-        return "pest-result"; // Thymeleaf template for results
-    }
+//    @GetMapping("/pest-tool")
+//    public String getForm(Model model) {
+//        model.addAttribute("pestInput", new PestInput());
+//        model.addAttribute("cropTypes", pestService.getCropTypes());
+//        return "pest-form"; // Thymeleaf template name
+//    }
+//
+//    @PostMapping("/pest-tool")
+//    public String processForm(@ModelAttribute PestInput pestInput, Model model) {
+//        PestOutput output = pestService.identifyAndTreat(pestInput);
+//        model.addAttribute("pestOutput", output);
+//        return "pest-result"; // Thymeleaf template for results
+//    }
 
     @GetMapping("/contact")
     public String showContactPage() {

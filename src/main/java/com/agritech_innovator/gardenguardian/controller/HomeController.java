@@ -68,9 +68,9 @@ public class HomeController {
 //        return "pest-result"; // Thymeleaf template for results
 //    }
 
-    @GetMapping("/contact")
-    public String showContactPage() {
-        return "contact"; // Maps to contact.html in templates
-    }
+//    @GetMapping("/contact")
+//    public String showContactPage() {
+//        return "contact"; // Maps to contact.html in templates
+//    }
 
 }
